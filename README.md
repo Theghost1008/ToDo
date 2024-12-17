@@ -1,2 +1,2 @@
-# AzureXplore2k24# ToDo
-# ToDo
+Hello, making this project to practice connecting backend with frontend
+Lets go!!!!!
