@@ -16,6 +16,6 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 app.use("/api/v1/users", userRoutes)
-app.use("/api/v1", notesRoutes)
+app.use("/api/v1/notes", notesRoutes)
 
 export {app}

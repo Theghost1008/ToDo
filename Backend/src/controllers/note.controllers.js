@@ -23,13 +23,12 @@ const createNote = asyncHandler(async (req, res) => {
 // Get all notes
 const getAllNotes = asyncHandler(async (req, res) => {
     const notes = await Note.find({ user: req.user._id });
-
     res.status(200).json({ success: true, data: notes });
 });
 
 // Delete a note
 const deleteNote = asyncHandler(async (req, res) => {
-    const note = await Note.findByIdAndDelete(req.params.id);
+    const note = await Note.findByIdAndDelete(req.params._id);
 
     if (!note) {
         throw new ApiError(404, 'Note not found');
