@@ -52,7 +52,7 @@ const loginUser = asyncHandler(async(req,res)=>{
         throw new ApiError(400, "Username or email is required")
     }
 
-    const foundUser = User.findOne({
+    const foundUser = await User.findOne({
         $or:[{username},{email}]
     })
     if(!foundUser)
