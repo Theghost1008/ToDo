@@ -10,10 +10,7 @@ const generateAccesssAndRefreshTokens = async (userId)=>{
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
         user.refreshToken = refreshToken
-        console.log("Before saving: ", user);
         await user.save({validateBeforeSave : false})// when saving mongoose models kicks in i.e. when saving password is required
-        console.log("After saving: ", user);
-        
         return {accessToken, refreshToken}
     } catch (error) {
         throw new ApiError(500, "Something went wrong while generating tokens");
@@ -81,4 +78,24 @@ const loginUser = asyncHandler(async(req,res)=>{
 
 })
 
-export {registerUser, loginUser}
+const logoutUser = asyncHandler(async (req,res)=>{
+    console.log("User being logged out: ", req.user)
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+    const options={
+        httpOnly: true,
+        secure: true
+    }
+    return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json(new apiResponse(200,{user: req.user},"User logged out"))
+})
+
+export {registerUser, loginUser, logoutUser}

@@ -9,3 +9,5 @@ router.route("/notes").post(verifyJWT,createNote)
 router.route("/notes").get(verifyJWT,getAllNotes)
 
 router.route(`/notes/:id`).delete(verifyJWT,deleteNote)
+
+export default router

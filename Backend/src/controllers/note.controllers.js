@@ -38,4 +38,4 @@ const deleteNote = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: 'Note deleted successfully' });
 });
 
-export { createNote, getAllNotes, updateNote, deleteNote};
+export { createNote, getAllNotes, deleteNote};

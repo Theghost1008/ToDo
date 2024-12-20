@@ -1,0 +1,2 @@
+When 2 users are logged in the postman, it saves the cookies of the recently logged in user and when we hit the logout route
+the recently logged in user is logged out and when we again hit logout it give unauthorized
