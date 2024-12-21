@@ -2,7 +2,71 @@ import { User } from "../models/user.models.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/apiError.js"
 import { apiResponse } from "../utils/apiResponse.js"
+import dotenv from "dotenv"
+import crypto from "crypto"
+import nodemailer from "nodemailer"
+// import session from "express-session";
+// import connectMongo from "connect-mongo";
+// import express from "express";
 
+dotenv.config();
+
+// const MongoStore = connectMongo(session);
+
+// const app = express();
+
+// app.use(session({
+//     secret: process.env.SESSION_SECRET || 'default_secret',
+//     resave: false,
+//     saveUninitialized: true,
+//     store: connectMongo.create({ 
+//         mongoUrl: `${process.env.MONGODB_URL}/ToDo?retryWrites=true&w=majority`, 
+//         collectionName: 'sessions',
+//         ttl: 60 * 60 
+//     }),
+//     cookie: {
+//         maxAge: 1000 * 60 * 60,
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "development"
+//     }
+// }));
+
+
+const generateOTP = ()=>{
+    return crypto.randomInt(100000, 999999).toString();
+}
+
+console.log(process.env.EMAIL);
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth:{
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
+    },
+    debug:true,
+    logger:true
+})
+
+
+const sendOTP = async (email, otp)=>{
+    console.log(email,otp);
+    const mailOptions={
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Reset password OTP",
+        text: `Your OTP for reset password is ${otp}`
+    }
+    try {
+        await transporter.sendMail(mailOptions)
+        console.log("OTP sent to successfully: ", email);
+        
+    } catch (error) {
+        console.log(error.message);
+        throw new ApiError(500, "Failed to send OTP");
+    }
+    
+}
 
 const generateAccesssAndRefreshTokens = async (userId)=>{
     try {
@@ -79,7 +143,6 @@ const loginUser = asyncHandler(async(req,res)=>{
 })
 
 const logoutUser = asyncHandler(async (req,res)=>{
-    console.log("User being logged out: ", req.user)
     await User.findByIdAndUpdate(
         req.user._id,
         {
@@ -98,4 +161,64 @@ const logoutUser = asyncHandler(async (req,res)=>{
     return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json(new apiResponse(200,{user: req.user},"User logged out"))
 })
 
-export {registerUser, loginUser, logoutUser}
+const requestOTP = asyncHandler (async(req,res)=>{
+    const {email, username} = req.body
+    if(!(email || username))
+        throw new ApiError(400, "Email or username is required")
+    const user = await User.findOne({
+        $or:[{username},{email}]
+    })
+
+    if(!user)
+        throw new ApiError(404, "User not found")
+
+    const otp = generateOTP()
+    const otpExp = Date.now() +10*60*1000
+
+    user.otp = otp
+    user.otpExp = otpExp
+    await user.save()
+    const targetEmail = email || user.email;
+    try {
+        await sendOTP(targetEmail,otp)
+    } catch (error) {
+        console.log("Error in sending otp: ", error)
+        throw new ApiError(400, "Error in sending otp")
+    }
+    req.session.email = targetEmail;
+    req.session.username = user.username;
+    return res.status(200).json(new apiResponse(200,{},`OTP sent to your email: ${email}`))
+})
+
+const verifyOTP = asyncHandler(async(req,res)=>{
+    const {otp} = req.body
+    const {email,username} = req.session
+    if(!(email || username || otp))
+        throw new ApiError(401,"Email, username and otp are required")
+    const user = await User.findOne({
+        $or:[{username},{email}]
+    })
+    if(!user)
+        throw new ApiError(404,"User not found")
+    user.otp = undefined
+    user.otpExp = undefined
+    await user.save()
+    return res.status(200).json(new apiResponse(200,{},"OTP verified successfully"))
+})
+
+const resetPass = asyncHandler (async(req,res)=>{
+    const {newPass} = req.body
+    const {email,username} = req.session
+    if(!(email || username || newPass))
+        throw new ApiError(401,"Username, email and new password are required")
+    const user = await User.findOne({
+        $or:[{username},{email}]
+    })
+    if(!user)
+        throw new ApiError(404,"User not found")
+    user.password = newPass
+    await user.save()
+    return res.status(200).json(new apiResponse(200,{},"Password resetted successfully"))
+})
+
+export {registerUser, loginUser, logoutUser, requestOTP, verifyOTP, resetPass}

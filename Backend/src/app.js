@@ -3,8 +3,12 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import userRoutes from "./routes/user.routes.js"
 import notesRoutes from "./routes/note.routes.js"
+import dotenv from "dotenv"
+dotenv.config()
 
 const app = express()
+console.log(process.env.CORS_ORIGIN);
+
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true

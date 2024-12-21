@@ -1,6 +1,7 @@
 import mongoose,{Schema} from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { type } from "os";
 
 const userSchema = new Schema(
     {
@@ -21,6 +22,16 @@ const userSchema = new Schema(
         },
         refreshToken:{
             type: String
+        },
+        otp:{
+            type: String
+        },
+        otpExp:{
+            type: Date
+        },
+        isVerified:{
+            type: Boolean,
+            default: false
         }
     },{timestamps: true})
 
