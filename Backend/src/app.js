@@ -7,10 +7,9 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const app = express()
-console.log(process.env.CORS_ORIGIN);
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true
 }))
 

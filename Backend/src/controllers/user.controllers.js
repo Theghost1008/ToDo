@@ -59,7 +59,7 @@ const sendOTP = async (email, otp)=>{
     }
     try {
         await transporter.sendMail(mailOptions)
-        console.log("OTP sent to successfully: ", email);
+        console.log("OTP sent successfully to: ", email);
         
     } catch (error) {
         console.log(error.message);
@@ -81,28 +81,78 @@ const generateAccesssAndRefreshTokens = async (userId)=>{
     }
 }
 
-const registerUser = asyncHandler( async(req,res)=>{
-    const {name,email,username, password} = req.body
+const registerRequest = asyncHandler(async (req, res) => {
+    const { name, email, username, password } = req.body;
+
+    if (!(name && email && username && password)) {
+        throw new ApiError(400, "All fields are required");
+    }
+
     const existedUser = await User.findOne({
-        $or:[{username},{email}]
-    })
-    if(existedUser)
-        throw new ApiError(409, "User with entered username or email already exists")
+        $or: [{ username }, { email }],
+    });
+
+    if (existedUser) {
+        throw new ApiError(409, "User with entered username or email already exists");
+    }
+
+    const otp = generateOTP();
+    const otpExp = Date.now() + 10 * 60 * 1000;
+
+    req.session.registrationData = { name, email, username, password, otp, otpExp };
+
+    try {
+        await sendOTP(email, otp);
+        return res.status(200).json(new apiResponse(200, {}, "OTP sent to your email"));
+    } catch (error) {
+        throw new ApiError(500, "Failed to send OTP");
+    }
+});
+
+const verifyRegistrationOTP = asyncHandler(async (req, res) => {
+    const { otp } = req.body;
+    const { registrationData } = req.session;
+
+    if (!registrationData) {
+        throw new ApiError(400, "No OTP session found");
+    }
+
+    const { otp: sessionOtp, otpExp } = registrationData;
+
+    if (otp !== sessionOtp) {
+        throw new ApiError(401, "Invalid OTP");
+    }
+
+    if (Date.now() > otpExp) {
+        throw new ApiError(401, "OTP expired");
+    }
+    req.session.registrationData.otpVerified = true
+    return res.status(200).json(new apiResponse(200, {}, "OTP verified successfully"))
+});
+
+const registerUser = asyncHandler(async (req, res) => {
+    const { registrationData } = req.session;
+
+    if (!registrationData) {
+        throw new ApiError(400, "No registration session found");
+    }
+
+    const { name, email, username, password, otpVerified } = registrationData;
+
+    if (!otpVerified) {
+        throw new ApiError(400, "OTP not verified");
+    }
+
     const user = await User.create({
         name,
         email,
         username: username.toLowerCase(),
         password,
     })
-    const createdUser = await User.findById(user._id)
-    if(!createdUser)
-        {
-            throw new ApiError(500, "Something went wrong while registering the user");
-        }
-        
-    return res.status(201).json(
-        new apiResponse(200,createdUser,"User registered successfully")
-    )
+
+    req.session.registrationData = null; // Clear the session after successful registration
+
+    return res.status(201).json(new apiResponse(200, user, "User registered successfully"));
 })
 
 const loginUser = asyncHandler(async(req,res)=>{
@@ -221,4 +271,4 @@ const resetPass = asyncHandler (async(req,res)=>{
     return res.status(200).json(new apiResponse(200,{},"Password resetted successfully"))
 })
 
-export {registerUser, loginUser, logoutUser, requestOTP, verifyOTP, resetPass}
+export {verifyRegistrationOTP, registerRequest,registerUser, loginUser, logoutUser, requestOTP, verifyOTP, resetPass}
