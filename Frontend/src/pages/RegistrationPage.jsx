@@ -14,11 +14,15 @@ function RegisterForm(){
 
     const handleRegister = async(e)=>{
         e.preventDefault();
+        console.log("Form data: ", formdata)
         try {
             await axios.post("/users/register-request", formdata)
             navigate("/verify-register")
         } catch (err) {
-            setError(err.response?.data?.message || "Registration failed");
+            if(err.response?.status===400)
+                setError(err.response?.data?.message)
+            else
+                setError("Registration failed, Please try again");
         }
     }
     const handleChange = async(e)=>{
@@ -26,7 +30,7 @@ function RegisterForm(){
         setData((prev)=>({...prev,[name]:value}))
     }
 
-    return <div className="form container register">
+    return <div className="form-container register">
         <h1>Create Your Account</h1>
         <form onSubmit={handleRegister}>
             {error && <p className="error">{error}</p>}

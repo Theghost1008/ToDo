@@ -5,7 +5,7 @@ import axios from "../api/axios";
 function ResetPass() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPass, setPassword] = useState("");
   const [step, setStep] = useState(1); // Step 1: Request OTP, Step 2: Verify OTP, Step 3: Reset Password
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ function ResetPass() {
   const handleResetPassword = async (event) => {
     event.preventDefault();
     try {
-      await axios.post("/users/reset-password", { email, password });
+      await axios.post("/users/reset-password", { email, newPass });
       alert("Password reset successfully!");
       navigate("/");
     } catch (err) {
@@ -78,7 +78,8 @@ function ResetPass() {
           <input
             type="password"
             placeholder="Enter new password"
-            value={password}
+            name="newPass"
+            value={newPass}
             onChange={(e) => setPassword(e.target.value)}
             required
           />

@@ -11,12 +11,15 @@ html {
   font-family: "Montserrat", sans-serif;
 }
 body {
-  background: #eee;
+  background: black;
   background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
   padding: 0 16px;
 }
 
 header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #f5ba13;
   margin: auto -16px;
   padding: 16px 32px;
@@ -27,6 +30,8 @@ header h1 {
   color: #fff;
   font-family: "McLaren", cursive;
   font-weight: 200;
+  display: flex;
+  align-items: center;
 }
 
 footer {
@@ -165,5 +170,129 @@ form.create-note button {
 }
 
 .form-footer button:hover {
-  text-decoration: underline;
+  color: white;
+}
+
+/* Register User Page Styles */
+
+.register-container {
+  width: 90%;
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.register-container h1 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5em;
+}
+
+.register-container .error,
+.register-container .success,
+.register-container .loading {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+.register-container .error {
+  background: #ffe6e6;
+  color: #d9534f;
+}
+
+.register-container .success {
+  background: #e6ffe6;
+  color: #5cb85c;
+  position: relative;
+}
+
+.register-container .loading {
+  background: #f9f9f9;
+  color: #007bff;
+}
+
+.register-container .error h1,
+.register-container .success h1,
+.register-container .loading h1 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.register-container .error p,
+.register-container .success p,
+.register-container .loading p {
+  font-size: 1em;
+}
+
+.register-container .success .animated-popup {
+  font-size: 2em;
+  animation: pop 1s infinite;
+  margin-top: 10px;
+}
+
+.register-container .spinner {
+  border: 4px solid #ddd;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin: 20px auto;
+  animation: spin 1s linear infinite;
+}
+
+.register-container button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.register-container button:hover {
+  background: #0056b3;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pop {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}
+
+.logout-button {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: black;
+  font-weight: bolder;
+  border: 2px solid white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: white;
+  color: #f5ba13;
 }

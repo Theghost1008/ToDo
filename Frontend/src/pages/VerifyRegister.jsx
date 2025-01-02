@@ -18,7 +18,7 @@ function VerifyOtp() {
     };
 
     return (
-        <div className="form container verify-otp">
+        <div className="form-container verify-otp">
             <h1>Verify OTP</h1>
             <form onSubmit={handleVerifyOtp}>
                 {error && <p className="error">{error}</p>}

@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import { app } from "./app.js"
 
 dotenv.config();
-console.log(process.env.MONGODB_URL)
 
 const port=process.env.PORT || 5000
 

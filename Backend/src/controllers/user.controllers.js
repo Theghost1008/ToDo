@@ -35,9 +35,6 @@ dotenv.config();
 const generateOTP = ()=>{
     return crypto.randomInt(100000, 999999).toString();
 }
-
-console.log(process.env.EMAIL);
-
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth:{
@@ -49,13 +46,13 @@ const transporter = nodemailer.createTransport({
 })
 
 
-const sendOTP = async (email, otp)=>{
+const sendOTP = async (email, otp, msg)=>{
     console.log(email,otp);
     const mailOptions={
         from: process.env.EMAIL,
         to: email,
         subject: "Reset password OTP",
-        text: `Your OTP for reset password is ${otp}`
+        text: `${msg} ${otp}`
     }
     try {
         await transporter.sendMail(mailOptions)
@@ -85,7 +82,8 @@ const registerRequest = asyncHandler(async (req, res) => {
     const { name, email, username, password } = req.body;
 
     if (!(name && email && username && password)) {
-        throw new ApiError(400, "All fields are required");
+        // throw new ApiError(400, "All fields are required");
+        return res.status(400).json({message: "All fields are required"})
     }
 
     const existedUser = await User.findOne({
@@ -93,7 +91,7 @@ const registerRequest = asyncHandler(async (req, res) => {
     });
 
     if (existedUser) {
-        throw new ApiError(409, "User with entered username or email already exists");
+        return res.status(400).json({message: "The entered username of email already exists"})
     }
 
     const otp = generateOTP();
@@ -102,7 +100,7 @@ const registerRequest = asyncHandler(async (req, res) => {
     req.session.registrationData = { name, email, username, password, otp, otpExp };
 
     try {
-        await sendOTP(email, otp);
+        await sendOTP(email, otp,"Your OTP for registration verification is: ");
         return res.status(200).json(new apiResponse(200, {}, "OTP sent to your email"));
     } catch (error) {
         throw new ApiError(500, "Failed to send OTP");
