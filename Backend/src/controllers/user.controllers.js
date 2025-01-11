@@ -47,7 +47,6 @@ const transporter = nodemailer.createTransport({
 
 
 const sendOTP = async (email, otp, msg)=>{
-    console.log(email,otp);
     const mailOptions={
         from: process.env.EMAIL,
         to: email,
@@ -56,10 +55,8 @@ const sendOTP = async (email, otp, msg)=>{
     }
     try {
         await transporter.sendMail(mailOptions)
-        console.log("OTP sent successfully to: ", email);
         
     } catch (error) {
-        console.log(error.message);
         throw new ApiError(500, "Failed to send OTP");
     }
     
@@ -170,12 +167,8 @@ const loginUser = asyncHandler(async(req,res)=>{
     const passCorrect = await foundUser.isPasswordCorrect(password)
     if(!passCorrect)
         throw new ApiError(401,"Invalid login credentials")
-
-
     const {accessToken,refreshToken} = await generateAccesssAndRefreshTokens(foundUser._id)
     const loggedInUser = await User.findById(foundUser._id).select("-password -refreshToken")
-    console.log("Logged in user: ", loggedInUser);
-    
     const options ={
         httpOnly : true,
         secure: true,
@@ -230,7 +223,6 @@ const requestOTP = asyncHandler (async(req,res)=>{
     try {
         await sendOTP(targetEmail,otp)
     } catch (error) {
-        console.log("Error in sending otp: ", error)
         throw new ApiError(400, "Error in sending otp")
     }
     req.session.email = targetEmail;

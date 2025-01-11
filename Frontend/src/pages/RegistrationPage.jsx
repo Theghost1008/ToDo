@@ -30,7 +30,8 @@ function RegisterForm(){
         setData((prev)=>({...prev,[name]:value}))
     }
 
-    return <div className="form-container register">
+    return(
+    <div className="form-container register">
         <h1>Create Your Account</h1>
         <form onSubmit={handleRegister}>
             {error && <p className="error">{error}</p>}
@@ -71,7 +72,8 @@ function RegisterForm(){
         <div className="form-footer">
             <button onClick={() => navigate("/")}>Back to Login</button>
       </div>
-    </div>
+    </div>)
+   
 }
 
 export default RegisterForm

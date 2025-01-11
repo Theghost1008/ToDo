@@ -11,8 +11,12 @@ html {
   font-family: "Montserrat", sans-serif;
 }
 body {
+  margin: 0;
+  padding: 0;
+  height: 70vh;
   background: black;
-  background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+  /* background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); */
+  background-repeat: repeat;
   padding: 0 16px;
 }
 
@@ -44,6 +48,12 @@ footer {
 
 footer p {
   color: #ccc;
+}
+
+.login-page-body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .note {
   background: #fff;
@@ -78,7 +88,7 @@ footer p {
 }
 
 form.create-note {
-  position: relative;
+  position: initial;
   width: 480px;
   margin: 30px auto 20px auto;
   background: #fff;
@@ -97,7 +107,7 @@ form.create-note textarea {
   resize: none;
 }
 form.create-note button {
-  position: absolute;
+  position: relative;
   right: 18px;
   bottom: -18px;
   background: #f5ba13;
@@ -111,20 +121,112 @@ form.create-note button {
   outline: none;
 }
 
+body.heading{
+  display: block;
+}
+
 .form-container {
-  width: 90%;
-  max-width: 400px;
-  margin: 50px auto;
+  width: 400px;
   padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container.register{
+  width: 400px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 200px;
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  box-shadow: 0 0 15px rgba(144, 19, 254, 0.7), 0 0 25px rgba(108, 0, 255, 0.7);
   text-align: center;
+  background-color: #0f0f0f;
+  color: #fff;
+  overflow: hidden;
+}
+
+.form-container.forgot-password{
+  width: 400px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: baseline;
+  align-items: center;
+  margin-top: 200px;
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  box-shadow: 0 0 15px rgba(144, 19, 254, 0.7), 0 0 25px rgba(108, 0, 255, 0.7);
+  text-align: center;
+  background-color: #0f0f0f;
+  color: #fff;
+  overflow: hidden;
+}
+
+.login-page {
+  width: 760px;
+  height: 400px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 200px;
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  box-shadow: 0 0 15px rgba(255, 153, 51), 0 0 25px rgb(255, 223, 0);
+  text-align: center;
+  background-color: #0f0f0f;
+  color: #fff;
+  overflow: hidden;
+}
+
+.welcome-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-text::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgb(255, 239, 150),
+  rgb(255, 223, 0),
+  rgb(255, 153, 51),
+  rgb(204, 102, 0)); 
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%); 
+  z-index: -1; 
+}
+
+.welcome-text h2 {
+  text-align: right;
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: black;
+  margin-left: 60px;
+  text-shadow: 0 0 10px rgb(255, 239, 150);
+}
+
+
+.welcome-text p {
+  text-align: right;
+  font-size: 16px;
+  color: black;
+  margin-left: 85px;
 }
 
 .form-container h1 {
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 28px;
+    margin-bottom: 20px;
+    color: #fff;
 }
 
 .form-container form {
@@ -141,39 +243,61 @@ form.create-note button {
 }
 
 .form-container button {
-  margin: 10px 0;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #007bff;
-  cursor: pointer;
-  transition: background 0.3s;
+  width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: linear-gradient(90deg, rgb(255, 153, 51) 0%, rgb(204, 102, 0) 100%);
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 .form-container button:hover {
-  background-color: #0056b3;
+  background: linear-gradient(90deg, rgb(255, 153, 51) 0%, rgb(204, 102, 0) 100%);
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(144, 19, 254, 0.7);
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background: #2c2c2c;
+    color: #fff;
+    font-size: 16px;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+input[type="email"]::placeholder,
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .form-footer {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .form-footer button {
-  margin: 5px;
-  font-size: 14px;
-  background: none;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
+  background: transparent;
+  color: #a5a5a5;
+  margin: 10px 0;
 }
 
 .form-footer button:hover {
-  color: white;
+  color: #fff;
 }
 
-/* Register User Page Styles */
+
 
 .register-container {
   width: 90%;
@@ -282,10 +406,11 @@ form.create-note button {
 
 .logout-button {
   padding: 8px 16px;
-  background-color: transparent;
-  color: black;
+  background-color: rgb(204, 102, 0);
+  color: #121212;
   font-weight: bolder;
-  border: 2px solid white;
+  border: none;
+  box-shadow: 0 0 10px rgba(144, 19, 254, 0.7);
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;

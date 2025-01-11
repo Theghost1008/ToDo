@@ -47,7 +47,7 @@ function Home(){
         }
     }
 
-    return <div>
+    return <div className="heading">
         <Header/>
         <CreateArea onAdd ={addNote}/>
         {notes.map((note)=>(
