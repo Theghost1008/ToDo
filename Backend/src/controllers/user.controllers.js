@@ -5,32 +5,8 @@ import { apiResponse } from "../utils/apiResponse.js"
 import dotenv from "dotenv"
 import crypto from "crypto"
 import nodemailer from "nodemailer"
-// import session from "express-session";
-// import connectMongo from "connect-mongo";
-// import express from "express";
 
 dotenv.config();
-
-// const MongoStore = connectMongo(session);
-
-// const app = express();
-
-// app.use(session({
-//     secret: process.env.SESSION_SECRET || 'default_secret',
-//     resave: false,
-//     saveUninitialized: true,
-//     store: connectMongo.create({ 
-//         mongoUrl: `${process.env.MONGODB_URL}/ToDo?retryWrites=true&w=majority`, 
-//         collectionName: 'sessions',
-//         ttl: 60 * 60 
-//     }),
-//     cookie: {
-//         maxAge: 1000 * 60 * 60,
-//         httpOnly: true,
-//         secure: process.env.NODE_ENV === "development"
-//     }
-// }));
-
 
 const generateOTP = ()=>{
     return crypto.randomInt(100000, 999999).toString();
@@ -46,11 +22,11 @@ const transporter = nodemailer.createTransport({
 })
 
 
-const sendOTP = async (email, otp, msg)=>{
+const sendOTP = async (email, otp, msg, ob)=>{
     const mailOptions={
         from: process.env.EMAIL,
         to: email,
-        subject: "Reset password OTP",
+        subject: `${ob}`,
         text: `${msg} ${otp}`
     }
     try {
@@ -97,7 +73,7 @@ const registerRequest = asyncHandler(async (req, res) => {
     req.session.registrationData = { name, email, username, password, otp, otpExp };
 
     try {
-        await sendOTP(email, otp,"Your OTP for registration verification is: ");
+        await sendOTP(email, otp,"Your OTP for registration verification is: ", "Registration OTP");
         return res.status(200).json(new apiResponse(200, {}, "OTP sent to your email"));
     } catch (error) {
         throw new ApiError(500, "Failed to send OTP");
@@ -221,7 +197,7 @@ const requestOTP = asyncHandler (async(req,res)=>{
     await user.save()
     const targetEmail = email || user.email;
     try {
-        await sendOTP(targetEmail,otp)
+        await sendOTP(targetEmail,otp,"Your OTP for resetting password is as give below. Never share it to anyone!!","Reset password OTP")
     } catch (error) {
         throw new ApiError(400, "Error in sending otp")
     }
@@ -250,7 +226,7 @@ const resetPass = asyncHandler (async(req,res)=>{
     const {newPass} = req.body
     const {email,username} = req.session
     if(!(email || username || newPass))
-        throw new ApiError(401,"Username, email and new password are required")
+        throw new ApiError(401,"New password is required")
     const user = await User.findOne({
         $or:[{username},{email}]
     })
