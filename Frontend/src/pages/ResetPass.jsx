@@ -3,43 +3,50 @@ import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 
 function ResetPass() {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPass, setPassword] = useState("");
-  const [step, setStep] = useState(1); // Step 1: Request OTP, Step 2: Verify OTP, Step 3: Reset Password
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("")
+  const [otp, setOtp] = useState("")
+  const [newPass, setPassword] = useState("")
+  const [step, setStep] = useState(1)
+  const [error, setError] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const navigate = useNavigate()
 
   const handleRequestOTP = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
+    setError(null)
+    setSuccessMessage(null)
     try {
-      await axios.post("/users/request-otp", { email });
-      alert("OTP sent to your email!");
-      setStep(2);
+      await axios.post("/users/request-otp", { email })
+      setSuccessMessage("OTP sent to your email!")
+      setStep(2)
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send OTP");
+      setError(err.response?.data?.message || "Failed to send OTP")
     }
   };
 
   const handleVerifyOTP = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
+    setError(null)
+    setSuccessMessage(null)
     try {
-      await axios.post("/users/verify-otp", { email, otp });
-      alert("OTP verified successfully!");
-      setStep(3);
+      await axios.post("/users/verify-otp", { email, otp })
+      setSuccessMessage("OTP verified successfully!")
+      setStep(3)
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to verify OTP");
+      setError(err.response?.data?.message || "Failed to verify OTP")
     }
   };
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
+    setError(null)
+    setSuccessMessage(null)
     try {
       await axios.post("/users/reset-password", { email, newPass });
-      alert("Password reset successfully!");
-      navigate("/");
+      setSuccessMessage("Password reset successfully! Redirecting to login...")
+      setTimeout(() => navigate("/"), 2000)
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to reset password");
+      setError(err.response?.data?.message || "Failed to reset password")
     }
   };
 
@@ -48,6 +55,7 @@ function ResetPass() {
       <h1>Reset Your Password</h1>
       {step === 1 && (
         <form onSubmit={handleRequestOTP}>
+          {successMessage && <p className="success">{successMessage}</p>}
           {error && <p className="error">{error}</p>}
           <input
             type="email"
@@ -61,6 +69,7 @@ function ResetPass() {
       )}
       {step === 2 && (
         <form onSubmit={handleVerifyOTP}>
+          {successMessage && <p className="success">{successMessage}</p>}
           {error && <p className="error">{error}</p>}
           <input
             type="text"
@@ -74,6 +83,7 @@ function ResetPass() {
       )}
       {step === 3 && (
         <form onSubmit={handleResetPassword}>
+          {successMessage && <p className="success">{successMessage}</p>}
           {error && <p className="error">{error}</p>}
           <input
             type="password"
