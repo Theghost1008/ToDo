@@ -8,7 +8,13 @@ function Header() {
   const navigate = useNavigate();
   const handleLogout = async()=>{
     try{
-      await axios.post("/users/logout");
+      const token = localStorage.getItem("token");
+      await axios.post("/users/logout",{},{
+        headers:{
+          Authorization: `Bearer ${token}`
+        },withCredentials: true
+      });
+      localStorage.removeItem("token")
       navigate("/")
     }catch(err){
       console.log("Logout failed: ", err.response?.data?.message || err.message)
