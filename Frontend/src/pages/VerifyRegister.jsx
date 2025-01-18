@@ -13,7 +13,7 @@ function VerifyOtp() {
             await axios.post("/users/verify-register", { otp });
             navigate("/register");
         } catch (err) {
-            console.log("Error: ",err)
+            console.log("Error: ",error)
             setError(err.response?.data?.message || "OTP verification failed");
         }
     };

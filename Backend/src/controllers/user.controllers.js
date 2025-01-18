@@ -84,17 +84,23 @@ const verifyRegistrationOTP = asyncHandler(async (req, res) => {
     const { otp } = req.body;
     const { registrationData } = req.session;
 
+    console.log('Session Data:', registrationData); 
+    console.log('Received OTP:', otp);
+
     if (!registrationData) {
+        console.error("No OTP session found")
         throw new ApiError(400, "No OTP session found");
     }
 
     const { otp: sessionOtp, otpExp } = registrationData;
 
     if (otp !== sessionOtp) {
+        console.error("Invalid OTP: ",{received: otp, expected: sessionOtp})
         throw new ApiError(401, "Invalid OTP");
     }
 
     if (Date.now() > otpExp) {
+        console.error("OTP time expired")
         throw new ApiError(401, "OTP expired");
     }
     req.session.registrationData.otpVerified = true
