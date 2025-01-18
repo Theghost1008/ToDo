@@ -472,3 +472,27 @@ input[type="password"]::placeholder {
     transform: translateY(0);
   }
 }
+
+@media(max-width:768px){
+  .login-page{
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+  }
+  .welcome-text{
+    display: none;
+  }
+}
+
+@media(max-width:412px){
+  .login-page{
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+  }
+  .welcome-text{
+    display: none;
+  }
+}
