@@ -10,7 +10,7 @@ function VerifyOtp() {
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("/users/verify-register", { otp });
+            await axios.post("/users/verify-register", { otp },{withCredentials: true});
             navigate("/register");
         } catch (err) {
             console.log("Error: ",error)

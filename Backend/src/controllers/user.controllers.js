@@ -71,6 +71,7 @@ const registerRequest = asyncHandler(async (req, res) => {
     const otpExp = Date.now() + 10 * 60 * 1000;
 
     req.session.registrationData = { name, email, username, password, otp, otpExp };
+    console.log("Session data: ", req.session.registrationData)
 
     try {
         await sendOTP(email, otp,"Your OTP for registration verification is: ", "Registration OTP");
