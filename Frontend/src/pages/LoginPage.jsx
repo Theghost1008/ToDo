@@ -18,9 +18,6 @@ function Login(){
             setError(err.response?.data?.message || "Invalid Login credentials");
         }
     }
-    const handleRegister = async()=>{
-        navigate("/register")
-    }
 
     return (
     <div className="login-page">

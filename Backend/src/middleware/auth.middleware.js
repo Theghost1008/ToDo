@@ -6,16 +6,13 @@ import {User} from "../models/user.models.js";
 export const verifyJWT = asyncHandler(async (req,res,next)=>{
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")
-        console.log(token);
         if(!token){
             throw new ApiError(401, "Unauthorized request")
         }
         let decodedInfo;
         try {
             decodedInfo = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-            console.log("Decoded Info:", decodedInfo);
         } catch (err) {
-            console.log("Token verification failed:", err.message);
             throw new ApiError(401, "Invalid or expired token");
         }
         const user = await User.findById(decodedInfo?._id).select("-password -refreshToken")
