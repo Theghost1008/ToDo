@@ -71,6 +71,12 @@ const registerRequest = asyncHandler(async (req, res) => {
     const otpExp = Date.now() + 10 * 60 * 1000;
 
     req.session.registrationData = { name, email, username, password, otp, otpExp };
+    req.session.save((err)=>{
+        if(err)
+            console.error("Error in saving data: ", err)
+        else
+            console.log("Session saved yayy");
+    })
     console.log("Session data: ", req.session.registrationData)
 
     try {
@@ -105,6 +111,7 @@ const verifyRegistrationOTP = asyncHandler(async (req, res) => {
         throw new ApiError(401, "OTP expired");
     }
     req.session.registrationData.otpVerified = true
+    req.session.save()
     return res.status(200).json(new apiResponse(200, {}, "OTP verified successfully"))
 });
 
