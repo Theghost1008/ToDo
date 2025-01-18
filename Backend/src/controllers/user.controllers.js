@@ -78,6 +78,7 @@ const registerRequest = asyncHandler(async (req, res) => {
             console.log("Session saved yayy");
     })
     console.log("Session data: ", req.session.registrationData)
+    console.log("Session ID in request register OTP: ", req.sessionID)
 
     try {
         await sendOTP(email, otp,"Your OTP for registration verification is: ", "Registration OTP");
@@ -93,6 +94,7 @@ const verifyRegistrationOTP = asyncHandler(async (req, res) => {
 
     console.log('Session Data:', registrationData); 
     console.log('Received OTP:', otp);
+    console.log("Session ID in verify register OTP: ", req.sessionID)
 
     if (!registrationData) {
         console.error("No OTP session found")
